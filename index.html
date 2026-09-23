@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miftahul Falah - Daftar Film</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #eef1f5;
+            color: #222;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 35px auto;
+            background: white;
+            border: 1px solid #d5d9df;
+            padding: 28px;
+        }
+
+        header {
+            border-bottom: 3px solid #333;
+            padding-bottom: 15px;
+            margin-bottom: 18px;
+        }
+
+        h1 {
+            margin: 0 0 6px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            margin: 0;
+            color: #777;
+        }
+
+        nav {
+            background: #333;
+            padding: 12px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 28px;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .film {
+            display: flex;
+            gap: 20px;
+            padding: 18px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .poster {
+            width: 105px;
+            height: 145px;
+            object-fit: cover;
+            border: 1px solid #bbb;
+        }
+
+        .info {
+            flex: 1;
+        }
+
+        .info h2 {
+            margin: 0 0 12px;
+            font-size: 20px;
+        }
+
+        .info p {
+            margin: 9px 0;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #e9e9e9;
+            padding: 5px 9px;
+            margin-right: 5px;
+            font-size: 12px;
+        }
+
+        .price {
+            font-weight: bold;
+        }
+
+        footer {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+            color: #777;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        @media (max-width: 650px) {
+            .container {
+                width: 94%;
+                padding: 18px;
+            }
+
+            nav a {
+                margin: 0 8px;
+            }
+
+            .film {
+                gap: 12px;
+            }
+
+            .poster-column {
+                width: 85px;
+            }
+
+            .poster-column .poster {
+                width: 85px;
+                height: 120px;
+            }
+        }
+
+
+        .poster-column {
+            width: 105px;
+            flex-shrink: 0;
+        }
+
+        .poster-column .poster {
+            display: block;
+            width: 105px;
+        }
+
+        .poster-column .trailer-btn {
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .trailer-btn {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 9px 14px;
+            background: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .trailer-btn:hover {
+            background: #555;
+        }
+
+        .trailer-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.82);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .trailer-box {
+            width: 100%;
+            max-width: 850px;
+            background: white;
+            padding: 15px;
+            position: relative;
+        }
+
+        .trailer-box video {
+            width: 100%;
+            max-height: 75vh;
+            display: block;
+            background: black;
+        }
+
+
+        .video-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            margin-top: 10px;
+            padding: 7px;
+            background: #222;
+            border-radius: 8px;
+        }
+
+        .video-controls button {
+            border: 1px solid #444;
+            background: #333;
+            color: #eee;
+            border-radius: 6px;
+            padding: 7px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .video-controls button:hover {
+            background: #444;
+            border-color: #666;
+        }
+
+        .video-controls button.active {
+            background: #555;
+            border-color: #888;
+        }
+
+        @media (max-width: 500px) {
+            .video-controls {
+                gap: 5px;
+            }
+
+            .video-controls button {
+                padding: 7px 9px;
+                font-size: 11px;
+            }
+        }
+
+        .close-trailer {
+            position: absolute;
+            right: 8px;
+            top: 5px;
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #333;
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .nav-btn {
+            color: white;
+            text-decoration: none;
+            margin: 0 8px;
+            padding: 9px 14px;
+            border-radius: 6px;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .nav-btn:hover, .nav-btn.active { background: #555; }
+        .ticket-btn {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 10px 16px;
+            background: #e50914;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .ticket-btn:hover { background: #b20710; }
+        .ticket-btn {
+            display: inline-block;
+            margin: 6px 0 0 8px;
+            padding: 10px 16px;
+            background: #087f5b;
+            color: #fff;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .ticket-btn:hover { background: #066b4d; }
+
+        .ticket-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.62);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+        }
+        .ticket-box {
+            width: min(1100px, 100%);
+            max-height: 92vh;
+            overflow-y: auto;
+            background: #f8fbfc;
+            border: 1px solid #d7e0e3;
+            border-radius: 12px;
+            padding: 28px;
+            position: relative;
+        }
+        .ticket-heading { text-align: center; margin: 0; color: #075d48; font-size: 25px; }
+        .ticket-subtitle { text-align: center; color: #6c757d; line-height: 1.6; max-width: 720px; margin: 10px auto 22px; }
+        .close-ticket {
+            position: absolute;
+            right: 12px;
+            top: 10px;
+            width: 36px;
+            height: 36px;
+            border: 1px solid #c9d0d4;
+            border-radius: 50%;
+            background: #fff;
+            color: #333;
+            font-size: 22px;
+            cursor: pointer;
+        }
+        .plans {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        .plan {
+            position: relative;
+            border: 1px solid #cfd8dc;
+            border-radius: 12px;
+            padding: 20px 18px 18px;
+            background: #fff;
+            min-height: 430px;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            transition: transform .22s ease, border-color .22s ease, background-color .22s ease, box-shadow .22s ease;
+            outline: none;
+        }
+        .plan:hover {
+            transform: translateY(-4px);
+            border-color: #0a9a70;
+            box-shadow: 0 8px 22px rgba(8,127,91,.12);
+        }
+        .plan.selected {
+            border: 2px solid #087f5b;
+            background: #dff7ed;
+            box-shadow: 0 0 0 3px rgba(8,127,91,.12), 0 10px 26px rgba(8,127,91,.18);
+            animation: planSelected .28s ease-out;
+        }
+        .plan.selected::after {
+            content: '✓ DIPILIH';
+            position: absolute;
+            left: 14px;
+            top: 14px;
+            background: #087f5b;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .3px;
+        }
+        .plan.selected .plan-badge {
+            background: #087f5b;
+            color: #fff;
+        }
+        .plan.selected .subscribe-btn {
+            background: #087f5b;
+            color: #fff;
+        }
+        .plan.selected .subscribe-btn:hover {
+            background: #066b4d;
+        }
+        @keyframes planSelected {
+            0% { transform: scale(.97); }
+            65% { transform: scale(1.015); }
+            100% { transform: scale(1); }
+        }
+        /* Paket unggulan tetap netral sampai benar-benar dipilih */
+        .plan.featured {
+            border: 1px solid #cfd8dc;
+            background: #fff;
+        }
+        .plan-badge {
+            position: absolute;
+            right: 14px;
+            top: 15px;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 4px 7px;
+            border-radius: 3px;
+            background: #e8ecef;
+            color: #465057;
+        }
+        .featured .plan-badge { background: #d9f4e9; color: #087f5b; }
+        .plan h3 { margin: 5px 0 8px; font-size: 18px; padding-right: 70px; }
+        .plan-desc { color: #667176; font-size: 13px; line-height: 1.55; min-height: 58px; }
+        .plan-price {
+            border-bottom: 1px solid #dce3e5;
+            padding: 9px 0 16px;
+            margin-bottom: 17px;
+            font-size: 13px;
+            color: #087f5b;
+            font-weight: bold;
+        }
+        .plan-price strong { font-size: 26px; color: #111827; margin: 0 3px; }
+        .plan ul { padding-left: 20px; line-height: 1.65; margin: 0 0 20px; font-size: 13px; color: #3f474c; flex: 1; }
+        .plan li { margin-bottom: 7px; }
+        .subscribe-btn {
+            width: 100%;
+            min-height: 42px;
+            padding: 10px;
+            border: 1px solid #0a8966;
+            border-radius: 7px;
+            background: #fff;
+            color: #087f5b;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .featured .subscribe-btn { background: #fff; color: #087f5b; }
+        .subscribe-btn:hover { background: #e7f7f1; }
+        .toast {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            background: #222;
+            color: #fff;
+            padding: 13px 16px;
+            border-radius: 8px;
+            display: none;
+            z-index: 1200;
+        }
+        .section-title { margin-top: 30px; }
+        .extra-section { margin-top: 28px; padding: 22px; background: #f7f9fa; border: 1px solid #dfe4e7; border-radius: 8px; scroll-margin-top: 20px; }
+        .extra-section h2 { margin-top: 0; color: #075d48; }
+        @media (max-width: 750px) {
+            .plans { grid-template-columns: 1fr; }
+            nav a { margin: 0 2px; padding: 8px 7px; }
+            .ticket-box { padding: 22px 14px; }
+            .plan { min-height: 0; }
+        }
+        @media (max-width: 750px) {
+            .plans { grid-template-columns: 1fr; }
+            nav a { margin: 0 2px; padding: 8px 7px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>Miftahul Falah</h1>
+        <p class="subtitle">Koleksi film pilihan dan informasi tiket</p>
+    </header>
+
+    <nav>
+        <a class="nav-btn active" href="#beranda" data-target="beranda">Beranda</a>
+        <a class="nav-btn" href="#daftar-film" data-target="daftar-film">Daftar Film</a>
+        <a class="nav-btn" href="#favorit" data-target="favorit">Favorit</a>
+        <a class="nav-btn" href="#kontak" data-target="kontak">Kontak</a>
+        <button class="ticket-btn" type="button" onclick="openTicketModal()">🎟 Paket Premium</button>
+    </nav>
+
+    <main id="beranda">
+
+        <section class="film">
+            <div class="poster-column">
+                <img class="poster"
+                     src="flash.jpg"
+                     alt="Poster film">
+                <button class="trailer-btn" onclick="openTrailer('The Flash - Trailer.mp4', 'Trailer The Flash')">▶ Trailer</button>
+            </div>
+            <div class="info">
+                <h2>1. The Flash (2014–2023) — Series</h2>
+                <p>
+                    <span class="tag">Action</span>
+                    <span class="tag">Adventure</span>
+                    <span class="tag">Drama</span>
+                    <span class="tag">Sci-Fi</span>
+                </p>
+                <p><strong>Rating:</strong> 7.4/10</p>
+                <p><strong>Jumlah:</strong> 9 musim</p>
+                <p><strong>Durasi:</strong> sekitar 43 menit per episode</p>
+                <p><strong>Kreator:</strong> Greg Berlanti, Andrew Kreisberg, Geoff Johns</p>
+                <p>Barry Allen mendapatkan kekuatan super cepat setelah tersambar petir akibat ledakan akselerator partikel. Ia kemudian menjadi The Flash dan menggunakan kekuatannya untuk melindungi Central City serta menghadapi berbagai meta-human.</p>
+                <p><strong>Pemeran:</strong> Grant Gustin, Candice Patton, Danielle Panabaker</p>
+                <p class="price">Status: Series Selesai</p>
+                <button class="favorite-btn trailer-btn" type="button" data-favorite="false" data-film="The Flash" onclick="toggleFavorite(this, 'The Flash')">♡ Tambah Favorit</button>
+
+
+            </div>
+        </section>
+
+        <section class="film">
+            <div class="poster-column">
+                <img class="poster"
+                     src="Prison break.jpg"
+                     alt="Poster film">
+                <button class="trailer-btn" onclick="openTrailer('prison break.mp4', 'Trailer Prison Break')">▶ Trailer</button>
+            </div>
+            <div class="info">
+                <h2>2. Prison Break (2005–2017) — Series</h2>
+                <p>
+                    <span class="tag">Action</span>
+                    <span class="tag">Crime</span>
+                    <span class="tag">Drama</span>
+                    <span class="tag">Thriller</span>
+                </p>
+                <p><strong>Rating:</strong> 8.3/10</p>
+                <p><strong>Jumlah:</strong> 5 musim, 90 episode</p>
+                <p><strong>Durasi:</strong> sekitar 44 menit per episode</p>
+                <p><strong>Kreator:</strong> Paul T. Scheuring</p>
+                <p>Michael Scofield sengaja masuk ke penjara setelah saudaranya, Lincoln Burrows, dijatuhi hukuman mati atas kejahatan yang tidak dilakukannya. Michael kemudian menjalankan rencana rumit untuk membantu Lincoln melarikan diri dan mengungkap konspirasi di balik kasus tersebut.</p>
+                <p><strong>Pemeran:</strong> Wentworth Miller, Dominic Purcell, Sarah Wayne Callies</p>
+                <p class="price">Status: Series Selesai</p>
+                <button class="favorite-btn trailer-btn" type="button" data-favorite="false" data-film="Prison Break" onclick="toggleFavorite(this, 'Prison Break')">♡ Tambah Favorit</button>
+            </div>
+        </section>
+
+        <section class="film">
+            <div class="poster-column">
+                <img class="poster"
+                     src="peaky blinders.jpg"
+                     alt="Poster film">
+                <button class="trailer-btn" onclick="openTrailer('trailer-peaky-blinders.mp4', 'Trailer Peaky Blinders')">▶ Trailer</button>
+            </div>
+            <div class="info">
+                <h2>3. Peaky Blinders (2013–2022) — Series</h2>
+                <p>
+                    <span class="tag">Crime</span>
+                    <span class="tag">Drama</span>
+                    <span class="tag">History</span>
+                </p>
+                <p><strong>Rating:</strong> 8.7/10</p>
+                <p><strong>Jumlah:</strong> 6 musim</p>
+                <p><strong>Durasi:</strong> sekitar 1 jam per episode</p>
+                <p><strong>Kreator:</strong> Steven Knight</p>
+                <p>Peaky Blinders mengikuti keluarga Shelby dan geng mereka di Birmingham, Inggris, pada tahun 1919. Thomas Shelby berusaha memperluas kekuasaan keluarganya dari dunia kriminal ke bisnis dan politik, sambil menghadapi berbagai musuh dan konflik.</p>
+                <p><strong>Pemeran:</strong> Cillian Murphy, Paul Anderson, Sophie Rundle, Helen McCrory</p>
+                <p class="price">Status: Series Selesai</p>
+                <button class="favorite-btn trailer-btn" type="button" data-favorite="false" data-film="Peaky Blinders" onclick="toggleFavorite(this, 'Peaky Blinders')">♡ Tambah Favorit</button>
+            </div>
+        </section>
+
+    </main>
+
+    <section id="daftar-film" class="extra-section">
+        <h2>Daftar Film</h2>
+        <p>Semua film tersedia di halaman utama. Gunakan tombol <strong>Trailer</strong> untuk melihat cuplikan.</p>
+    </section>
+
+    <section id="favorit" class="extra-section">
+        <h2>Favorit</h2>
+        <p id="favoriteList">Belum ada film yang ditambahkan ke favorit.</p>
+    </section>
+
+    <section id="kontak" class="extra-section">
+        <h2>Kontak</h2>
+        <p>Untuk informasi koleksi film dan paket Pass Cinema, silakan hubungi admin Miftahul Falah.</p>
+    </section>
+
+        <div class="ticket-modal" id="ticketModal" onclick="closeTicketModal(event)">
+            <div class="ticket-box" onclick="event.stopPropagation()">
+                <button class="close-ticket" type="button" onclick="closeTicketModal()" aria-label="Tutup">×</button>
+                <h2 class="ticket-heading">Pilihan Paket Pass Cinema</h2>
+                <p class="ticket-subtitle">Tingkatkan pengalaman menonton Anda ke tingkat berikutnya. Tentukan tingkatan pass bulanan yang cocok dengan kebutuhan dan kebiasaan pilihan Anda.</p>
+                <div class="plans">
+                    <article class="plan" tabindex="0" role="button" aria-label="Pilih Paket Starter Pass" onclick="selectPlan(this, 'Starter Pass')" onkeydown="handlePlanKey(event, this, 'Starter Pass')">
+                        <span class="plan-badge">SILVER</span>
+                        <h3>1. Paket Starter Pass</h3>
+                        <p class="plan-desc">Opsi terjangkau bagi penonton santai yang menyukai tayangan reguler.</p>
+                        <div class="plan-price">IDR <strong>50.000</strong> / bln</div>
+                        <ul>
+                            <li>Bebas nonton film kategori 2D Standard</li>
+                            <li>Jatah 2 tiket fisik gratis per bulan (Hari Kerja)</li>
+                            <li>Layanan reservasi tempat duduk daring</li>
+                            <li>Potongan harga 10% untuk Snacking Bar</li>
+                            <li>Akses Studio Luxury & Kursi Recliner</li>
+                        </ul>
+                        <button class="subscribe-btn" type="button" onclick="subscribe('Starter Pass')">Ambil Paket Starter</button>
+                    </article>
+
+                    <article class="plan featured" tabindex="0" role="button" aria-label="Pilih Paket Pro Pass" onclick="selectPlan(this, 'Pro Pass')" onkeydown="handlePlanKey(event, this, 'Pro Pass')">
+                        <span class="plan-badge">GOLD MEMBER</span>
+                        <h3>2. Paket Pro Pass</h3>
+                        <p class="plan-desc">Pengalaman audiovisual tingkat lanjut untuk penikmat efek gambar dan suara mantap.</p>
+                        <div class="plan-price">IDR <strong>95.000</strong> / bln</div>
+                        <ul>
+                            <li>Termasuk seluruh benefit dari Starter Pass</li>
+                            <li>Bebas akses tayangan studio 3D & Audio Dolby 5.1</li>
+                            <li>Jatah 5 tiket gratis per bulan (berlaku setiap hari)</li>
+                            <li>Potongan harga 20% F&amp;B + gratis 1 popcorn</li>
+                            <li>Bebas pilih zona kursi favorit tanpa biaya tambahan</li>
+                        </ul>
+                        <button class="subscribe-btn" type="button" onclick="subscribe('Pro Pass')">Ambil Paket Pro</button>
+                    </article>
+
+                    <article class="plan" tabindex="0" role="button" aria-label="Pilih Paket Ultimate Pass" onclick="selectPlan(this, 'Ultimate Pass')" onkeydown="handlePlanKey(event, this, 'Ultimate Pass')">
+                        <span class="plan-badge">PLATINUM</span>
+                        <h3>3. Paket Ultimate Pass</h3>
+                        <p class="plan-desc">Layanan sinema kelas premium dengan kenyamanan maksimal dan perlakuan khusus.</p>
+                        <div class="plan-price">IDR <strong>165.000</strong> / bln</div>
+                        <ul>
+                            <li>Termasuk seluruh benefit Starter &amp; Pro Pass</li>
+                            <li>Akses khusus Studio Luxury & Kursi Leather Recliner</li>
+                            <li>Fasilitas Platinum Lounge + makanan menyambut</li>
+                            <li>Jatah 10 tiket gratis per bulan (bebas kapan saja)</li>
+                            <li>Diskon 30% F&amp;B + layanan antar makanan ke tempat duduk</li>
+                            <li>Bebas biaya parkir khusus Valet Sinema</li>
+                        </ul>
+                        <button class="subscribe-btn" type="button" onclick="subscribe('Ultimate Pass')">Ambil Paket Ultimate</button>
+                    </article>
+                </div>
+            </div>
+        </div>
+
+        <div class="trailer-modal" id="trailerModal" onclick="closeTrailer(event)">
+            <div class="trailer-box">
+                <button class="close-trailer" onclick="closeTrailer()">×</button>
+                <h3 id="trailerTitle"></h3>
+                <video id="trailerVideo" playsinline>
+                    Browser Anda tidak mendukung video.
+                </video>
+
+                <div class="video-controls">
+                    <button id="playPauseBtn" onclick="togglePlayPause()">▶ Play</button>
+                    <button onclick="setVideoSize('big')">Big</button>
+                    <button onclick="setVideoSize('small')">Small</button>
+                    <button onclick="setVideoSize('normal')" class="active" id="normalBtn">Normal</button>
+                </div>
+            </div>
+        </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <footer>
+        &copy; 2026 Miftahul Falah
+    </footer>
+
+</div>
+
+
+    <script>
+        function openTrailer(videoFile, title) {
+            const modal = document.getElementById("trailerModal");
+            const video = document.getElementById("trailerVideo");
+            const titleEl = document.getElementById("trailerTitle");
+
+            titleEl.textContent = title;
+            video.src = videoFile;
+            modal.style.display = "flex";
+            video.style.maxHeight = "75vh";
+            video.style.width = "100%";
+            video.style.margin = "0";
+            document.querySelectorAll(".video-controls button").forEach(button => button.classList.remove("active"));
+            document.getElementById("normalBtn").classList.add("active");
+            document.getElementById("playPauseBtn").textContent = "❚❚ Pause";
+            video.load();
+            video.play().catch(() => {});
+        }
+
+
+        function togglePlayPause() {
+            const video = document.getElementById("trailerVideo");
+            const btn = document.getElementById("playPauseBtn");
+
+            if (video.paused) {
+                video.play().catch(() => {});
+                btn.textContent = "❚❚ Pause";
+            } else {
+                video.pause();
+                btn.textContent = "▶ Play";
+            }
+        }
+
+        function setVideoSize(size) {
+            const video = document.getElementById("trailerVideo");
+            const buttons = document.querySelectorAll(".video-controls button");
+
+            buttons.forEach(button => button.classList.remove("active"));
+
+            if (size === "big") {
+                video.style.maxHeight = "85vh";
+                video.style.width = "100%";
+            } else if (size === "small") {
+                video.style.maxHeight = "45vh";
+                video.style.width = "75%";
+                video.style.margin = "0 auto";
+            } else {
+                video.style.maxHeight = "75vh";
+                video.style.width = "100%";
+                video.style.margin = "0";
+            }
+
+            const activeBtn = {
+                big: buttons[1],
+                small: buttons[2],
+                normal: document.getElementById("normalBtn")
+            }[size];
+
+            if (activeBtn) activeBtn.classList.add("active");
+        }
+
+        document.getElementById("trailerVideo").addEventListener("play", function() {
+            document.getElementById("playPauseBtn").textContent = "❚❚ Pause";
+        });
+
+        document.getElementById("trailerVideo").addEventListener("pause", function() {
+            document.getElementById("playPauseBtn").textContent = "▶ Play";
+        });
+
+        function closeTrailer(event) {
+            if (event && event.target !== document.getElementById("trailerModal")) return;
+
+            const modal = document.getElementById("trailerModal");
+            const video = document.getElementById("trailerVideo");
+
+            video.pause();
+            video.currentTime = 0;
+            video.removeAttribute("src");
+            video.load();
+            document.getElementById("playPauseBtn").textContent = "▶ Play";
+            document.getElementById("normalBtn").classList.add("active");
+            modal.style.display = "none";
+        }
+
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "Escape") {
+                closeTrailer();
+            }
+        });
+
+        function openTicketModal() {
+            document.getElementById("ticketModal").style.display = "flex";
+        }
+
+        function closeTicketModal(event) {
+            if (event && event.target !== document.getElementById("ticketModal")) return;
+            document.getElementById("ticketModal").style.display = "none";
+        }
+
+        function selectPlan(card, plan) {
+            document.querySelectorAll('.plan').forEach(item => item.classList.remove('selected'));
+            card.classList.add('selected');
+            document.querySelectorAll('.plan').forEach(item => item.setAttribute('aria-pressed', 'false'));
+            card.setAttribute('aria-pressed', 'true');
+            showToast('✓ ' + plan + ' dipilih');
+        }
+
+        function handlePlanKey(event, card, plan) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                selectPlan(card, plan);
+            }
+        }
+
+        function subscribe(plan) {
+            const card = Array.from(document.querySelectorAll('.plan')).find(item =>
+                item.getAttribute('aria-label') === 'Pilih Paket ' + plan
+            );
+            if (card) selectPlan(card, plan);
+            showToast("✓ " + plan + " dipilih. Lanjutkan ke pembayaran (demo)." );
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.style.display = "block";
+            clearTimeout(window.toastTimer);
+            window.toastTimer = setTimeout(() => toast.style.display = "none", 3000);
+        }
+
+        function toggleFavorite(button, film) {
+            const list = document.getElementById("favoriteList");
+            const current = Array.from(document.querySelectorAll(".favorite-btn"))
+                .filter(btn => btn.dataset.favorite === "true")
+                .map(btn => btn.dataset.film);
+
+            if (button.dataset.favorite === "true") {
+                button.dataset.favorite = "false";
+                button.textContent = "♡ Tambah Favorit";
+            } else {
+                button.dataset.favorite = "true";
+                button.dataset.film = film;
+                button.textContent = "♥ Hapus dari Favorit";
+            }
+
+            const favorites = Array.from(document.querySelectorAll(".favorite-btn"))
+                .filter(btn => btn.dataset.favorite === "true")
+                .map(btn => btn.dataset.film);
+
+            list.textContent = favorites.length
+                ? favorites.join(" • ")
+                : "Belum ada film yang ditambahkan ke favorit.";
+        }
+
+        document.querySelectorAll("nav .nav-btn").forEach(link => {
+            link.addEventListener("click", function(event) {
+                event.preventDefault();
+                document.querySelectorAll("nav .nav-btn").forEach(item => item.classList.remove("active"));
+                this.classList.add("active");
+                const target = document.getElementById(this.dataset.target);
+                if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+        });
+
+        document.addEventListener("keydown", function(event) {
+            if (event.key === "Escape") {
+                closeTicketModal();
+            }
+        });
+    </script>
+
+</body>
+</html>
